@@ -24,3 +24,7 @@ dist/
 
 # DB dumps (restore straight to Neon, don't commit)
 data/*.sql
+
+# Vercel
+.vercel
+web/.vercel
