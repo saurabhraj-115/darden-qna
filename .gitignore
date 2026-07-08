@@ -1,0 +1,26 @@
+# Env
+.env
+.env.local
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Data (chat exports and processed output stay local)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+
+# OS
+.DS_Store
+
+# DB dumps (restore straight to Neon, don't commit)
+data/*.sql
