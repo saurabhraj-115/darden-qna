@@ -17,20 +17,33 @@ export async function POST(req: NextRequest) {
   if (!ctx) return NextResponse.json({ error: "not found" }, { status: 404 });
 
   const transcript = ctx.messages
-    .map((m: any) => `${m.sender}: ${m.message}`)
+    .map((m: any) => {
+      const t = new Date(m.ts).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+      return `[${t}] ${m.sender}: ${m.message}`;
+    })
     .join("\n");
 
   const system: ChatMsg = {
     role: "system",
     content:
-      "You answer follow-up questions about one topic discussed in a UVA " +
-      "Darden student WhatsApp group. Use ONLY the context below — a summarized " +
-      "Q&A and the original chat messages it came from. If the answer isn't in " +
-      "the context, say you don't know and suggest asking the group directly. " +
+      "You help incoming UVA Darden MBA students by answering follow-up " +
+      "questions about ONE topic from their WhatsApp group. You are given the " +
+      "summarized Q&A and the original chat messages, each prefixed with its " +
+      "timestamp.\n" +
+      "- Answer from this context, and reason over it when useful: compute time " +
+      "differences between messages, compare, count, quote, or summarize.\n" +
+      "- If the context genuinely doesn't cover what they asked, say so briefly " +
+      "and suggest asking the group.\n" +
+      "- Politely decline general-knowledge questions unrelated to this topic.\n" +
       "Be concise and practical.\n\n" +
       `ORIGINAL QUESTION:\n${ctx.question}\n\n` +
       `SUMMARIZED ANSWER:\n${ctx.answer}\n\n` +
-      `ORIGINAL CHAT MESSAGES:\n${transcript}`,
+      `ORIGINAL CHAT MESSAGES (with timestamps):\n${transcript}`,
   };
 
   const answer = await chat([
