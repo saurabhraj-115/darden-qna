@@ -98,6 +98,12 @@ export default function Page() {
 
   useEffect(() => {
     loadHome();
+    // record a page view (best-effort)
+    fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: "home" }),
+    }).catch(() => {});
   }, [loadHome]);
 
   useEffect(() => {

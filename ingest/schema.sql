@@ -45,5 +45,14 @@ create table if not exists qa_topics (
     primary key (qa_id, topic_id)
 );
 
+create table if not exists visits (
+    id      bigserial primary key,
+    ts      timestamptz not null default now(),
+    kind    text not null,        -- 'view' | 'search' | 'ask'
+    detail  text,                 -- search query, etc.
+    country text
+);
+
 create index if not exists qa_embedding_idx on qa_pairs using hnsw (embedding vector_cosine_ops);
 create index if not exists messages_group_msgid_idx on messages ("group", msg_id);
+create index if not exists visits_ts_idx on visits (ts);

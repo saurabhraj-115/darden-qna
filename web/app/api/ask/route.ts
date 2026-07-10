@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pairContext } from "@/lib/qa";
 import { chat, ChatMsg } from "@/lib/openai";
+import { logVisit } from "@/lib/track";
 
 export const runtime = "nodejs";
 
@@ -12,6 +13,7 @@ export async function POST(req: NextRequest) {
   if (!id || !question) {
     return NextResponse.json({ error: "id and question required" }, { status: 400 });
   }
+  await logVisit("ask", question, req.headers.get("x-vercel-ip-country"));
 
   const ctx = await pairContext(id);
   if (!ctx) return NextResponse.json({ error: "not found" }, { status: 404 });
